@@ -1,0 +1,47 @@
+services:
+
+  # db:
+  #   image: mysql:5.7
+  #   container_name: db
+  #   volumes:
+  #     - ./mysql:/var/lib/mysql
+  #   environment:
+  #     - MYSQL_DATABASE=nodedb
+  #     - MYSQL_ROOT_PASSWORD=root
+  #     - MYSQL_ROOT_USER=root
+  #   networks: 
+  #     - node-network
+      
+  server:
+    image: server
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    container_name: server
+    
+    volumes:
+      - ./server:/usr/src/app
+    command: sh -c "npm install && npm start"
+    ports:
+      - "3000:3000"
+    networks:
+      - node-network
+    # depends_on:
+    #   - db
+      
+      
+
+  nginx:
+    image: nginx
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    container_name: nginx
+    ports:
+      - "8080:80"
+    networks:
+      - node-network
+
+networks:
+  node-network:
+    driver: bridge
