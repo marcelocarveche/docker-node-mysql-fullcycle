@@ -12,21 +12,40 @@ const config = {
     database: 'nodedb'
 }
 
-try {
-    const connection = mysql.createConnection(config)
-    // connection.query(`CREATE TABLE people (id int not null auto_increment, name varchar(255), primary key(id))`);
-    // connection.query(`INSERT INTO people(name) values('Carveche')`);
-    connection.query(`SELECT * FROM people`, (err, result, fields) => {
-        if (err) throw err;
-        console.log(result);
-    })
-    connection.end();
-} catch (error) {
-    console.log("Erro ao conectar com o banco de dados: ", error);
-}
+app.get('/', async (req, res) => {
+    const connection = await mysql.createConnection(config);
 
-app.get('/', (req, res) => {
-    res.send('Desenvolvimento com Docker & NodeJS');
+    connection.connect((e) => {
+        if (e) {
+            return console.error('Erro ao conectar ao banco de dados:', e);
+        }
+
+        console.log('Conectado ao banco de dados.');
+
+        connection.query(`
+            CREATE TABLE people (
+                id INT NOT NULL AUTO_INCREMENT,
+                name VARCHAR(255),
+                PRIMARY KEY (id)
+            )
+        `);
+
+        connection.query(`
+            INSERT INTO people(name) VALUES('Carveche')
+        `);
+
+        connection.query(`SELECT * FROM people`, (err, result) => {
+            if (err) {
+                return console.error('Erro ao consultar tabela:', err);
+            }
+
+            res.send(`<h1>Full Cycle Rocks!</h1> </br> ${result.map((r) => `<p>${r.name}</p>`).join('')}`);
+
+            console.log(result)
+        })
+
+        connection.end();
+    })
 });
 
 app.listen(port, () => {

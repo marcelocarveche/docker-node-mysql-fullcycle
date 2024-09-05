@@ -26,8 +26,8 @@ services:
       - "3000:3000"
     networks:
       - node-network
-    # depends_on:
-    #   - db
+    depends_on:
+      - db
       
       
 
