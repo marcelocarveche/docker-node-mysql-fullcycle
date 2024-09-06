@@ -21,9 +21,9 @@ app.get('/', async (req, res) => {
         }
 
         console.log('Conectado ao banco de dados.');
-
+        
         connection.query(`
-            CREATE TABLE people (
+            CREATE TABLE IF NOT EXISTS people (
                 id INT NOT NULL AUTO_INCREMENT,
                 name VARCHAR(255),
                 PRIMARY KEY (id)
